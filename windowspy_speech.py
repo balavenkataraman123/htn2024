@@ -1,8 +1,13 @@
+import simpleaudio as sa
 import win32gui
 import time
 import requests
+import pyttsx3
 
-import requests
+engine = pyttsx3.init()
+import soundfile as sf
+import soundcard as sc
+default_speaker = sc.default_speaker()
 
 api_key = 'VF.DM.66e6a243380effe3d506deda.re9t77w7eQcP5gkk' # it should look like this: VF.DM.XXXXXXX.XXXXXX... keep this a secret!
 user_id = 'random_shit'
@@ -36,6 +41,7 @@ def get_GPTOpinion(tab):
         return False
 
 productive_tabs = {}
+
 system_windows = ["Task Switching",
 "Windows PowerShell",
 "New Tab - Google Chrome",
@@ -64,7 +70,7 @@ def winEnumHandler(hwnd, ctx):
     global unproductivity_window
     past_windows = []
     if win32gui.IsWindowVisible( hwnd ):
-        s = win32gui.GetWindowText(hwnd)
+        s = win32gui.GetWindowText(hwnd).strip("*●  ")
         if len(s) >  0 and not s in system_windows and not s in past_windows:
             print(s)
             past_windows.append(s)
@@ -74,8 +80,8 @@ def winEnumHandler(hwnd, ctx):
                     currently_unproducive += 1
                     unproductivity_window = s
                     if currently_unproducive == 1:
-                        print("nudge because you're doing " + unproductivity_window + " instead of " + todo) 
-
+                        samples, samplerate = sf.read('nudge.wav')
+                        default_speaker.play(samples, samplerate=samplerate)
                     curr_time = time.time()
                     time_off_task += (curr_time - previous_time)
                     previous_time = curr_time
@@ -85,6 +91,7 @@ def winEnumHandler(hwnd, ctx):
                     previous_time = curr_time
             except:
                 if get_GPTOpinion(s):
+                    
                     productive_tabs[s] = True
                     curr_time = time.time()
                     time_on_task += (curr_time - previous_time)
@@ -94,16 +101,17 @@ def winEnumHandler(hwnd, ctx):
                     unproductivity_window = s
                     currently_unproducive += 1
                     if currently_unproducive == 1:
-                        print("nudge because you're doing " + unproductivity_window + " instead of " + todo) 
+                        samples, samplerate = sf.read('nudge.wav')
+                        default_speaker.play(samples, samplerate=samplerate)
                     curr_time = time.time()
                     time_off_task += (curr_time - previous_time)
                     previous_time = curr_time
 
     if currently_unproducive == 20:
-        print("big mistake because you're doing " + unproductivity_window + " instead of " + todo)       
+        samples, samplerate = sf.read(f'{unproductivity_window}.wav')
+        default_speaker.play(samples, samplerate=samplerate)
         currently_unproducive = 0
 
 while True:
     win32gui.EnumWindows( winEnumHandler, None)
-    print("-------------------------")
     time.sleep(1)
