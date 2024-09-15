@@ -1,16 +1,15 @@
 import "./Login.css";
 import { LoginForm } from "../../components";
-import useAuth from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { Navigate } from "react-router-dom";
 
 const Login = () => {
-  const user = useAuth();
-  const navigate = useNavigate();
+  const [user, loading] = useAuth();
 
   if (user) {
-    navigate("/");
+   return <Navigate to="/" />;
   }
-  
+
   return (
     <div className="login">
       <h1>Login</h1>

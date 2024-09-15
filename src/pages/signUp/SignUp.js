@@ -1,16 +1,15 @@
 import "./SignUp.css";
 import { SignUpForm } from "../../components";
 import { useAuth } from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 const SignUp = () => {
-  const user = useAuth();
-  const navigate = useNavigate();
+  const [user, loading] = useAuth();
 
   if (user) {
-    navigate("/");
+    return <Navigate to="/" />;
   }
-  
+
   return (
     <div className="sign-up">
       <SignUpForm />

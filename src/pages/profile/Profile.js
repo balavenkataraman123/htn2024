@@ -2,10 +2,9 @@ import React from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { logout } from "../../firebase/auth";
 import "./Profile.css";
-import { Navigate } from "react-router-dom";
 
 function Profile() {
-  const user = useAuth();
+  const [user, loading] = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -16,7 +15,9 @@ function Profile() {
     }
   };
 
-  if (!user) return <Navigate to="/landing" />
+  if (loading) return <p>Loading...</p>;
+
+  if (!user) return <p>You are logged out. Please <a href="/login">log in</a></p>;
 
   return (
     <div>
