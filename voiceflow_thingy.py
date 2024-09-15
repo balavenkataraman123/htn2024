@@ -1,6 +1,6 @@
 import requests # pip install requests
 
-api_key = 'VF.DM.66e6cb3eec948227a6f651cf.ohDtpIxvliIqviTo' # it should look like this: VF.DM.XXXXXXX.XXXXXX... keep this a secret!
+api_key = '' # it should look like this: VF.DM.XXXXXXX.XXXXXX... keep this a secret!
 
 # user_id defines who is having the conversation, e.g. steve, john.doe@gmail.com, username_464
 def interact(user_id, request):

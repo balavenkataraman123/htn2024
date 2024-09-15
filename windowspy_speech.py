@@ -3,13 +3,14 @@ import win32gui
 import time
 import requests
 import pyttsx3
+from pathvalidate import sanitize_filename
 
 engine = pyttsx3.init()
 import soundfile as sf
 import soundcard as sc
 default_speaker = sc.default_speaker()
 
-api_key = 'VF.DM.66e6a243380effe3d506deda.re9t77w7eQcP5gkk' # it should look like this: VF.DM.XXXXXXX.XXXXXX... keep this a secret!
+api_key = '' # it should look like this: VF.DM.XXXXXXX.XXXXXX... keep this a secret!
 user_id = 'random_shit'
 # user_id defines who is having the conversation, e.g. steve, john.doe@gmail.com, username_464
 name = "deeznuts"
@@ -87,7 +88,8 @@ def winEnumHandler(hwnd, ctx):
                     time_on_task += (curr_time - previous_time)
                     previous_time = curr_time
             except:
-                gpto = get_GPTOpinion(s) 
+                gpto = get_GPTOpinion(s)
+                
                 if gpto is None:
                     
                     productive_tabs[s] = True
@@ -95,7 +97,8 @@ def winEnumHandler(hwnd, ctx):
                     time_on_task += (curr_time - previous_time)
                     previous_time = curr_time
                 else:
-                    engine.save_to_file(text=gpto, filename=f'{s}.wav')
+                    print(gpto) 
+                    engine.save_to_file(text=gpto, filename=f'{sanitize_filename(s)}.wav')
                     engine.runAndWait()
 
                     productive_tabs[s] = False
@@ -109,7 +112,7 @@ def winEnumHandler(hwnd, ctx):
                     previous_time = curr_time
 
     if currently_unproducive == 20:
-        samples, samplerate = sf.read(f'{unproductivity_window}.wav')
+        samples, samplerate = sf.read(f'{sanitize_filename(unproductivity_window)}.wav')
         default_speaker.play(samples, samplerate=samplerate)
         currently_unproducive = 0
 
