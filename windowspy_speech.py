@@ -35,10 +35,7 @@ def get_GPTOpinion(tab):
     AIOutput = interact(name, { 'type': 'text', 'payload': nextInput })
     nextInput = todo
     AIOutput = interact(name, { 'type': 'text', 'payload': nextInput })
-    if AIOutput[0] == "Y":
-        return True
-    else:
-        return False
+    return AIOutput
 
 productive_tabs = {}
 
@@ -90,13 +87,15 @@ def winEnumHandler(hwnd, ctx):
                     time_on_task += (curr_time - previous_time)
                     previous_time = curr_time
             except:
-                if get_GPTOpinion(s):
+                gpto = get_GPTOpinion(s) 
+                if gpto is None:
                     
                     productive_tabs[s] = True
                     curr_time = time.time()
                     time_on_task += (curr_time - previous_time)
                     previous_time = curr_time
                 else:
+                    engine.save_to_file(text=gpto, filename=f'{s}.wav')
                     productive_tabs[s] = False
                     unproductivity_window = s
                     currently_unproducive += 1
