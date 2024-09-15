@@ -96,6 +96,8 @@ def winEnumHandler(hwnd, ctx):
                     previous_time = curr_time
                 else:
                     engine.save_to_file(text=gpto, filename=f'{s}.wav')
+                    engine.runAndWait()
+
                     productive_tabs[s] = False
                     unproductivity_window = s
                     currently_unproducive += 1
