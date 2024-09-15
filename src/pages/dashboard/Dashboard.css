@@ -1,0 +1,95 @@
+.dashboard {
+    width: 100%;
+    height: 100vh;
+    color: var(--white);
+    padding-left: 6px;
+    padding-right: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.dashboard h1 {
+    font-size: 24px;
+}
+
+a {
+    color: var(--white);
+    text-decoration: none;
+}
+
+.dashboard-app-header {
+    width: 100%;
+    padding: 24px 18px;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card .circle {
+    width: 13px;
+    height: 13px;
+    border-radius: 100%;
+    background-color: #6a7886;
+}
+
+.card .circle::after {
+    content: '';
+    position: absolute;
+    translate: 3px 3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 100%;
+    background-color: var(--highlight-color);
+}
+
+.ted-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dashboard #current-session {
+    background-color: var(--accent-color1);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+}
+
+.dashboard #current-session .current-session-info {
+    height: 104px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard #current-session .session-length-options button {
+    background-color: var(--accent-color2);
+    color: var(--text-color1);
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+}
+
+.dashboard #current-session .session-length-display {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: var(--text-color1);
+    font-size: 24px;
+}
+
+.dashboard #current-session .session-length-display button {
+    background-color: transparent;
+    border: none;
+    border-radius: 100%;
+    color: var(--text-color1);
+    font-size: 24px;
+}

@@ -9,9 +9,9 @@ export const useAuth = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+      setLoading(false);
     });
 
-    setLoading(false);
     return () => unsubscribe();
   }, []);
 

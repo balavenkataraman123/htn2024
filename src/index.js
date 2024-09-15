@@ -4,6 +4,14 @@ import './index.css';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
+document.addEventListener("DOMContentLoaded", event => {
+  // we can move only if we are not in a browser's tab
+  const isBrowser = matchMedia("(display-mode: browser)").matches;
+  if (!isBrowser) {
+     window.resizeTo(393, 852);
+  }
+});
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
