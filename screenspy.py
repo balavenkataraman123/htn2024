@@ -2,73 +2,108 @@ import win32gui
 import time
 import requests
 
-# defining the api-endpoint
-API_ENDPOINT = "http://pastebin.com/api/api_post.php"
+import requests
 
-# your API key here
-API_KEY = "XXXXXXXXXXXXXXXXX"
+api_key = 'VF.DM.66e6a243380effe3d506deda.re9t77w7eQcP5gkk' # it should look like this: VF.DM.XXXXXXX.XXXXXX... keep this a secret!
+user_id = 'random_shit'
+# user_id defines who is having the conversation, e.g. steve, john.doe@gmail.com, username_464
+name = "deeznuts"
+todo = input("What do you want to do today? ")
 
-# your source code here
-source_code = '''
-print("Hello, world!")
-a = 1
-b = 2
-print(a + b)
-'''
+def interact(user_id, request):
+    response = requests.post(
+        f'https://general-runtime.voiceflow.com/state/user/{user_id}/interact',
+        json={ 'request': request },
+        headers={ 'Authorization': api_key },
+    )
+    for trace in response.json():
+        if trace['type'] == 'speak' or trace['type'] == 'text':
+            return (trace['payload']['message'])
+        elif trace['type'] == 'end':
+            # an end trace means the the voiceflow dialog has ended
+            return None
+    return None
+
+def get_GPTOpinion(tab):
+    AIOutput = interact(name, { 'type': 'launch' })
+    nextInput = tab
+    AIOutput = interact(name, { 'type': 'text', 'payload': nextInput })
+    nextInput = todo
+    AIOutput = interact(name, { 'type': 'text', 'payload': nextInput })
+    if AIOutput[0] == "Y":
+        return True
+    else:
+        return False
 
 productive_tabs = {}
-system_windows = []
-
-
-def get_GPTOpinion(s):
-    # data to be sent to api
-    data = {'api_dev_key': API_KEY,
-            'api_option': 'paste',
-            'api_paste_code': source_code,
-            'api_paste_format': 'python'}
-
-    # sending post request and saving response as response object
-    r = requests.post(url=API_ENDPOINT, data=data)["response"]
-    return r
-    
+system_windows = ["Task Switching",
+"Windows PowerShell",
+"New Tab - Google Chrome",
+"screenspy.py - Hack_The_North_2024 - Visual Studio Code",
+"Windows Shell Experience Host",
+"Setup",
+"Realtek Audio Console",
+"Mail",
+"Settings",
+"Windows Input Experience",
+"Program Manager"]
 
 previous_time = time.time()
 time_on_task = 0
 time_off_task = 0
 
+currently_unproducive = 0
+unproductivity_window = ""
+
+
 def winEnumHandler(hwnd, ctx):
+    global previous_time
     global time_on_task
-    global time_off_task    
+    global time_off_task
+    global currently_unproducive    
+    global unproductivity_window
+    past_windows = []
     if win32gui.IsWindowVisible( hwnd ):
-            s = win32gui.GetWindowText(hwnd)
-            if len(s) >  0 and not s in system_windows:
-                print(s)
-                try:
-                    v = productive_tabs[s]
-                    if v == False:
-                        print("unproductive")
-                        curr_time = time.time()
-                        time_off_task += (curr_time - previous_time)
-                        previous_time = curr_time
-                    else:
-                        curr_time = time.time()
-                        time_on_task += (curr_time - previous_time)
-                        previous_time = curr_time
-                except:
-                    if get_GPTOpinion(s):
-                        productive_tabs[s] = True
-                        curr_time = time.time()
-                        time_on_task += (curr_time - previous_time)
-                        previous_time = curr_time
+        s = win32gui.GetWindowText(hwnd)
+        if len(s) >  0 and not s in system_windows and not s in past_windows:
+            print(s)
+            past_windows.append(s)
+            try:
+                v = productive_tabs[s]
+                if v == False:
+                    currently_unproducive += 1
+                    unproductivity_window = s
+                    if currently_unproducive == 1:
+                        print("nudge because you're doing " + unproductivity_window + " instead of " + todo) 
 
-                    else:
-                        productive_tabs[s] = False
-                        print("unproductive")
-                        curr_time = time.time()
-                        time_off_task += (curr_time - previous_time)
-                        previous_time = curr_time
+                    curr_time = time.time()
+                    time_off_task += (curr_time - previous_time)
+                    previous_time = curr_time
+                else:
+                    curr_time = time.time()
+                    time_on_task += (curr_time - previous_time)
+                    previous_time = curr_time
+            except:
+                if get_GPTOpinion(s):
+                    productive_tabs[s] = True
+                    curr_time = time.time()
+                    time_on_task += (curr_time - previous_time)
+                    previous_time = curr_time
+                else:
+                    productive_tabs[s] = False
+                    unproductivity_window = s
+                    currently_unproducive += 1
+                    if currently_unproducive == 1:
+                        print("nudge because you're doing " + unproductivity_window + " instead of " + todo) 
+                    curr_time = time.time()
+                    time_off_task += (curr_time - previous_time)
+                    previous_time = curr_time
+
+    if currently_unproducive == 20:
+        print("big fucky wucky because you're doing " + unproductivity_window + " instead of " + todo)       
+        currently_unproducive = 0
+
 while True:
-
     win32gui.EnumWindows( winEnumHandler, None)
     print("-------------------------")
     time.sleep(1)
